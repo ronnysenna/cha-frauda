@@ -173,7 +173,7 @@ export default function Home() {
             <CardContent className="text-center py-6">
               <div className="text-4xl mb-2">📅</div>
               <h3 className="font-bold">Data</h3>
-              <p className="text-sm text-gray-600">14 de Março de 2025</p>
+              <p className="text-sm text-gray-600">14 de Março de 2026</p>
             </CardContent>
           </Card>
 
