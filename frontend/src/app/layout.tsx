@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,10 +12,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "Chá de Fraldas - Registre sua Presença",
   description: "Sistema de registro de presença para o Chá de Fraldas",
-  viewport: "width=device-width, initial-scale=1",
 };
 
 export default function RootLayout({
