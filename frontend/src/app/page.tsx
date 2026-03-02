@@ -26,6 +26,11 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [stockLoading, setStockLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Carregar estoque
   useEffect(() => {
@@ -150,6 +155,14 @@ export default function Home() {
     </label>
   );
 
+  if (!mounted) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-pink-50">
+        <Loader2 className="h-8 w-8 animate-spin text-pink-500" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-orange-50 to-amber-50">
       <Toaster position="top-right" />
@@ -198,7 +211,7 @@ export default function Home() {
                   className="text-blue-600 hover:underline block mt-1"
                 >
                   R. Vicente Rosal Ferreira Leite, 125<br />
-                  
+
                 </a>
               </div>
             </CardContent>
