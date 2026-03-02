@@ -64,6 +64,19 @@ export const api = {
     if (!response.ok) throw new Error(`Erro ao aumentar ${itemName}`);
   },
 
+  async updateStock(itemName: string, quantity: number): Promise<void> {
+    const response = await fetch(
+      `${API_BASE}/stock/${encodeURIComponent(itemName)}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quantity }),
+      }
+    );
+    if (!response.ok)
+      throw new Error(`Erro ao atualizar estoque de ${itemName}`);
+  },
+
   // ===== ESTATÍSTICAS =====
   async getStats(): Promise<StatsResponse> {
     const response = await fetch(`${API_BASE}/stats`);

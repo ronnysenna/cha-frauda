@@ -10,8 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { api } from '@/lib/api';
-import type { FormData } from '@/types';
-import { ITEMS_FRALDAS, ITEMS_BERCO, ITEMS_ROUPAS, ITEMS_HIGIENE } from '@/types';
+import type { FormData, StockItem } from '@/types';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
 
@@ -23,7 +22,7 @@ export default function Home() {
     observacoes: '',
   });
 
-  const [stock, setStock] = useState<Record<string, number>>({});
+  const [stockItems, setStockItems] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [stockLoading, setStockLoading] = useState(true);
@@ -34,11 +33,7 @@ export default function Home() {
       try {
         setStockLoading(true);
         const items = await api.getStock();
-        const stockMap: Record<string, number> = {};
-        items.forEach((item) => {
-          stockMap[item.item_name] = item.quantity;
-        });
-        setStock(stockMap);
+        setStockItems(items);
       } catch (error) {
         console.error('Erro ao carregar estoque:', error);
         toast.error('Erro ao carregar estoque');
@@ -67,16 +62,32 @@ export default function Home() {
     try {
       if (checked) {
         await api.reduceStock(itemName);
-        setStock((prev) => ({ ...prev, [itemName]: (prev[itemName] || 0) - 1 }));
+        setStockItems((prev) =>
+          prev.map((item) =>
+            item.item_name === itemName
+              ? { ...item, quantity: Math.max(0, item.quantity - 1) }
+              : item
+          )
+        );
       } else {
         await api.increaseStock(itemName);
-        setStock((prev) => ({ ...prev, [itemName]: (prev[itemName] || 0) + 1 }));
+        setStockItems((prev) =>
+          prev.map((item) =>
+            item.item_name === itemName
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          )
+        );
       }
     } catch (error) {
       console.error('Erro ao atualizar estoque:', error);
       toast.error('Erro ao atualizar estoque');
-      // Reverter seleção local se necessário
-      setFormData((prev) => ({ ...prev, itens: checked ? prev.itens.filter(i => i !== itemName) : [...prev.itens, itemName] }));
+      setFormData((prev) => ({
+        ...prev,
+        itens: checked
+          ? prev.itens.filter((i) => i !== itemName)
+          : [...prev.itens, itemName],
+      }));
     }
   };
 
@@ -112,23 +123,29 @@ export default function Home() {
     }
   };
 
-  const getStockColor = (itemName: string) => {
-    const qty = stock[itemName] || 0;
+  const getItemsByCategory = (category: string) => {
+    return stockItems.filter((item) => item.category === category);
+  };
+
+  const getStockColor = (stockItem: StockItem) => {
+    const qty = stockItem.quantity;
     if (qty >= 3) return 'bg-blue-100 text-blue-700';
     if (qty >= 1) return 'bg-orange-100 text-orange-700';
     return 'bg-red-100 text-red-700';
   };
 
-  const ItemCheckbox = ({ item }: { item: { name: string; category: string } }) => (
+  const ItemCheckbox = ({ item }: { item: StockItem }) => (
     <label className="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-pink-400 transition">
       <Checkbox
-        checked={formData.itens.includes(item.name)}
-        onCheckedChange={(checked) => handleItemChange(item.name, checked as boolean)}
+        checked={formData.itens.includes(item.item_name)}
+        onCheckedChange={(checked) =>
+          handleItemChange(item.item_name, checked as boolean)
+        }
         disabled={stockLoading}
       />
-      <span className="ml-3 flex-1 font-medium">{item.name}</span>
-      <Badge variant="outline" className={getStockColor(item.name)}>
-        {stock[item.name] || 0}
+      <span className="ml-3 flex-1 font-medium">{item.item_name}</span>
+      <Badge variant="outline" className={getStockColor(item)}>
+        {item.quantity}
       </Badge>
     </label>
   );
@@ -142,7 +159,9 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="text-6xl mb-4">🍼</div>
           <h1 className="text-5xl font-black mb-2">Chá de Fraldas</h1>
-          <p className="text-xl opacity-90">Uma festa especial para celebrar a chegada do bebê</p>
+          <p className="text-xl opacity-90">
+            Uma festa especial para celebrar a chegada do bebê
+          </p>
         </div>
       </div>
 
@@ -170,7 +189,18 @@ export default function Home() {
             <CardContent className="text-center py-6">
               <div className="text-4xl mb-2">📍</div>
               <h3 className="font-bold">Local</h3>
-              <p className="text-sm text-gray-600">Recanto de Luz Espaço</p>
+              <div className="text-sm text-gray-600 mt-1">
+                <p className="font-semibold">Recanto de Luz Espaço</p>
+                <a
+                  href="https://www.google.com/maps?q=-3.854999,-38.510746"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline block mt-1"
+                >
+                  R. Vicente Rosal Ferreira Leite, 125<br />
+                  
+                </a>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -186,7 +216,12 @@ export default function Home() {
             <CardContent className="pt-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-semibold">Seu Nome Completo</label>
+                  <label
+                    htmlFor="name"
+                    className="text-sm font-semibold"
+                  >
+                    Seu Nome Completo
+                  </label>
                   <Input
                     id="name"
                     placeholder="Digite seu nome"
@@ -209,7 +244,9 @@ export default function Home() {
                         onChange={() => handlePresencaChange('sim')}
                         className="w-4 h-4"
                       />
-                      <label htmlFor="presenca-sim" className="ml-2">✅ Sim!</label>
+                      <label htmlFor="presenca-sim" className="ml-2">
+                        ✅ Sim!
+                      </label>
                     </div>
 
                     <div className="flex items-center cursor-pointer">
@@ -222,7 +259,9 @@ export default function Home() {
                         onChange={() => handlePresencaChange('nao')}
                         className="w-4 h-4"
                       />
-                      <label htmlFor="presenca-nao" className="ml-2">❌ Não</label>
+                      <label htmlFor="presenca-nao" className="ml-2">
+                        ❌ Não
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -230,8 +269,8 @@ export default function Home() {
                 <div className="space-y-3">
                   <div className="text-sm font-semibold">🍼 FRALDAS</div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {ITEMS_FRALDAS.map((item) => (
-                      <ItemCheckbox key={item.name} item={item} />
+                    {getItemsByCategory('fraldas').map((item) => (
+                      <ItemCheckbox key={item.id} item={item} />
                     ))}
                   </div>
                 </div>
@@ -246,27 +285,32 @@ export default function Home() {
                     </TabsList>
 
                     <TabsContent value="berco" className="space-y-2 mt-4">
-                      {ITEMS_BERCO.map((item) => (
-                        <ItemCheckbox key={item.name} item={item} />
+                      {getItemsByCategory('berco').map((item) => (
+                        <ItemCheckbox key={item.id} item={item} />
                       ))}
                     </TabsContent>
 
                     <TabsContent value="roupas" className="space-y-2 mt-4">
-                      {ITEMS_ROUPAS.map((item) => (
-                        <ItemCheckbox key={item.name} item={item} />
+                      {getItemsByCategory('roupas').map((item) => (
+                        <ItemCheckbox key={item.id} item={item} />
                       ))}
                     </TabsContent>
 
                     <TabsContent value="higiene" className="space-y-2 mt-4">
-                      {ITEMS_HIGIENE.map((item) => (
-                        <ItemCheckbox key={item.name} item={item} />
+                      {getItemsByCategory('higiene').map((item) => (
+                        <ItemCheckbox key={item.id} item={item} />
                       ))}
                     </TabsContent>
                   </Tabs>
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="observacoes" className="text-sm font-semibold">Observações (Opcional)</label>
+                  <label
+                    htmlFor="observacoes"
+                    className="text-sm font-semibold"
+                  >
+                    Observações (Opcional)
+                  </label>
                   <Textarea
                     id="observacoes"
                     placeholder="Alguma alergia ou mensagem especial?"

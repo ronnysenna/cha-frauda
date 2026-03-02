@@ -39,12 +39,25 @@ async function initializeDatabase() {
       CREATE TABLE IF NOT EXISTS item_stock (
         id SERIAL PRIMARY KEY,
         item_name VARCHAR(255) UNIQUE NOT NULL,
+        category VARCHAR(50),
         quantity INTEGER NOT NULL,
         initial_quantity INTEGER NOT NULL,
         last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log("✅ Tabelas criadas com sucesso!");
+
+    // Migração para adicionar coluna category se não existir (para bancos já criados)
+    await pool.query(`
+      DO $$
+      BEGIN
+          IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='item_stock' AND column_name='category') THEN
+              ALTER TABLE item_stock ADD COLUMN category VARCHAR(50);
+          END IF;
+      END
+      $$;
+    `);
+
+    console.log("✅ Tabelas criadas/atualizadas com sucesso!");
   } catch (err) {
     console.error("❌ Erro ao criar tabelas:", err);
   }
@@ -132,51 +145,55 @@ app.get("/api/stock", async (req, res) => {
 
 // 5️⃣ POST - Inicializar estoque (executar uma vez)
 app.post("/api/stock/initialize", async (req, res) => {
-  const initialStock = {
-    "Fraldas P": 5,
-    "Fraldas M": 13,
-    "Fraldas G": 17,
-    "Fraldas GG": 25,
-    "Pacote Fralda de Pano": 3,
-    "Cobertor de Berço": 2,
-    "Manta Micro Fibra": 2,
-    "Jogo de Lençol de Berço": 2,
-    "Móbile Safári": 1,
-    "Travesseiro Respirável": 2,
-    "Ninho Redutor": 1,
-    "Kit Abajur": 1,
-    "Manta de Passeio": 2,
-    Babador: 3,
-    "Bodies Manga Curta P": 4,
-    "Bodies Manga Longa P": 4,
-    "Bodies Manga Curta M": 4,
-    "Bodies Manga Longa M": 4,
-    Cueiro: 3,
-    "Kit Mijões c/3 RN": 2,
-    "Kit Mijões c/3 P": 2,
-    "Macacões RN": 4,
-    "Macacões P": 4,
-    "Kit c/3 Pares de Luva": 1,
-    "Kit c/3 Pares de Meia": 2,
-    "Saída da Maternidade": 1,
-    "Toalha com Capuz": 2,
-    "Toalha de Fralda": 2,
-    "Aspirador Nasal": 1,
-    "Kit de Mamadeira": 1,
-    "Kit Plástico s/Banheira": 1,
-    "Kit Manicure p/Bebê": 1,
-    "Kit Escova e Pente": 1,
-    "Lenço Umedecido": 3,
-    "Sabonete Líquido": 5,
-    "Pomada Bepantol Baby": 5,
-    Talco: 2,
-  };
+  const stockItems = [
+    // Fraldas
+    { name: "Fraldas P", category: "fraldas", qty: 5 },
+    { name: "Fraldas M", category: "fraldas", qty: 13 },
+    { name: "Fraldas G", category: "fraldas", qty: 17 },
+    { name: "Fraldas GG", category: "fraldas", qty: 25 },
+    { name: "Pacote Fralda de Pano", category: "fraldas", qty: 3 },
+    // Berço
+    { name: "Cobertor de Berço", category: "berco", qty: 2 },
+    { name: "Manta Micro Fibra", category: "berco", qty: 2 },
+    { name: "Jogo de Lençol de Berço", category: "berco", qty: 2 },
+    { name: "Móbile Safári", category: "berco", qty: 1 },
+    { name: "Travesseiro Respirável", category: "berco", qty: 2 },
+    { name: "Ninho Redutor", category: "berco", qty: 1 },
+    { name: "Kit Abajur", category: "berco", qty: 1 },
+    { name: "Manta de Passeio", category: "berco", qty: 2 },
+    // Roupas
+    { name: "Babador", category: "roupas", qty: 3 },
+    { name: "Bodies Manga Curta P", category: "roupas", qty: 4 },
+    { name: "Bodies Manga Longa P", category: "roupas", qty: 4 },
+    { name: "Bodies Manga Curta M", category: "roupas", qty: 4 },
+    { name: "Bodies Manga Longa M", category: "roupas", qty: 4 },
+    { name: "Cueiro", category: "roupas", qty: 3 },
+    { name: "Kit Mijões c/3 RN", category: "roupas", qty: 2 },
+    { name: "Kit Mijões c/3 P", category: "roupas", qty: 2 },
+    { name: "Macacões RN", category: "roupas", qty: 4 },
+    { name: "Macacões P", category: "roupas", qty: 4 },
+    { name: "Kit c/3 Pares de Luva", category: "roupas", qty: 1 },
+    { name: "Kit c/3 Pares de Meia", category: "roupas", qty: 2 },
+    { name: "Saída da Maternidade", category: "roupas", qty: 1 },
+    // Higiene
+    { name: "Toalha com Capuz", category: "higiene", qty: 2 },
+    { name: "Toalha de Fralda", category: "higiene", qty: 2 },
+    { name: "Aspirador Nasal", category: "higiene", qty: 1 },
+    { name: "Kit de Mamadeira", category: "higiene", qty: 1 },
+    { name: "Kit Plástico s/Banheira", category: "higiene", qty: 1 },
+    { name: "Kit Manicure p/Bebê", category: "higiene", qty: 1 },
+    { name: "Kit Escova e Pente", category: "higiene", qty: 1 },
+    { name: "Lenço Umedecido", category: "higiene", qty: 3 },
+    { name: "Sabonete Líquido", category: "higiene", qty: 5 },
+    { name: "Pomada Bepantol Baby", category: "higiene", qty: 5 },
+    { name: "Talco", category: "higiene", qty: 2 },
+  ];
 
   try {
-    for (const [itemName, quantity] of Object.entries(initialStock)) {
+    for (const item of stockItems) {
       await pool.query(
-        "INSERT INTO item_stock (item_name, quantity, initial_quantity) VALUES ($1, $2, $3) ON CONFLICT (item_name) DO UPDATE SET quantity = $2, initial_quantity = $3",
-        [itemName, quantity, quantity]
+        "INSERT INTO item_stock (item_name, category, quantity, initial_quantity) VALUES ($1, $2, $3, $4) ON CONFLICT (item_name) DO UPDATE SET quantity = $3, initial_quantity = $4, category = $2",
+        [item.name, item.category, item.qty, item.qty]
       );
     }
     res.json({ success: true, message: "Estoque inicializado com sucesso" });
@@ -245,14 +262,62 @@ app.get("/api/stats", async (req, res) => {
       "SELECT COUNT(*) FROM attendance_records WHERE LOWER(presenca) = 'nao'"
     );
 
+    // Calcular itens selecionados
+    const allRecords = await pool.query("SELECT itens FROM attendance_records");
+    const itensSelecionados = {};
+
+    allRecords.rows.forEach((row) => {
+      let itens = [];
+      try {
+        if (typeof row.itens === "string") {
+          itens = JSON.parse(row.itens);
+        } else if (Array.isArray(row.itens)) {
+          itens = row.itens;
+        }
+      } catch (e) {
+        itens = [];
+      }
+
+      if (Array.isArray(itens)) {
+        itens.forEach((item) => {
+          itensSelecionados[item] = (itensSelecionados[item] || 0) + 1;
+        });
+      }
+    });
+
     res.json({
       success: true,
       data: {
         total_registros: parseInt(totalRecords.rows[0].count),
-        total_presentes: parseInt(presentes.rows[0].count),
-        total_ausentes: parseInt(ausentes.rows[0].count),
+        confirmados: parseInt(presentes.rows[0].count),
+        ausentes: parseInt(ausentes.rows[0].count),
+        itens_selecionados: itensSelecionados,
       },
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 9️⃣ PUT - Atualizar estoque (quantidade manual)
+app.put("/api/stock/:itemName", async (req, res) => {
+  const { itemName } = req.params;
+  const { quantity } = req.body;
+
+  try {
+    const result = await pool.query(
+      "UPDATE item_stock SET quantity = $1, last_updated = CURRENT_TIMESTAMP WHERE item_name = $2 RETURNING *",
+      [quantity, itemName]
+    );
+
+    if (result.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Item não encontrado" });
+    }
+
+    res.json({ success: true, data: result.rows[0] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, error: err.message });

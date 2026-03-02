@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,8 +8,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { api } from '@/lib/api';
-import { AttendanceRecord, StatsResponse } from '@/types';
-import { Loader2, Trash2, Download, Eye, EyeOff } from 'lucide-react';
+import type { AttendanceRecord, StatsResponse, StockItem } from '@/types';
+import { Loader2, Trash2, Download, Eye, EyeOff, Package } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
 
 export default function AdminPage() {
@@ -19,7 +19,8 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(false);
     const [records, setRecords] = useState<AttendanceRecord[]>([]);
     const [stats, setStats] = useState<StatsResponse | null>(null);
-    const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+    const [stock, setStock] = useState<StockItem[]>([]);
+    const [viewMode, setViewMode] = useState<'cards' | 'table' | 'stock'>('cards');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
@@ -39,16 +40,34 @@ export default function AdminPage() {
     const loadData = async () => {
         try {
             setLoading(true);
-            const [recordsData, statsData] = await Promise.all([
+            const [recordsData, statsData, stockData] = await Promise.all([
                 api.getRecords(),
                 api.getStats(),
+                api.getStock(),
             ]);
             setRecords(recordsData);
             setStats(statsData);
+            setStock(stockData);
         } catch (error) {
+            console.error('Failed to load data', error);
             toast.error('Erro ao carregar dados');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleUpdateStock = async (itemName: string, newQuantity: number) => {
+        try {
+            await api.updateStock(itemName, newQuantity);
+            setStock((prev) =>
+                prev.map((item) =>
+                    item.item_name === itemName ? { ...item, quantity: newQuantity } : item
+                )
+            );
+            toast.success('Estoque atualizado!');
+        } catch (error) {
+            console.error('Failed to update stock', error);
+            toast.error('Erro ao atualizar estoque');
         }
     };
 
@@ -62,6 +81,7 @@ export default function AdminPage() {
             setDeleteDialogOpen(false);
             setDeleteId(null);
         } catch (error) {
+            console.error('Failed to delete', error);
             toast.error('Erro ao deletar registro');
         }
     };
@@ -189,6 +209,10 @@ export default function AdminPage() {
                     <Button variant={viewMode === 'table' ? 'default' : 'outline'} onClick={() => setViewMode('table')}>
                         📋 Tabela
                     </Button>
+                    <Button variant={viewMode === 'stock' ? 'default' : 'outline'} onClick={() => setViewMode('stock')}>
+                        <Package size={18} className="mr-2" />
+                        Estoque
+                    </Button>
                     <Button variant="outline" onClick={downloadCSV}>
                         <Download size={18} className="mr-2" />
                         Baixar CSV
@@ -217,11 +241,14 @@ export default function AdminPage() {
                                     <div>
                                         <p className="text-sm font-semibold text-gray-700 mb-2">Itens:</p>
                                         <div className="flex flex-wrap gap-2">
-                                            {record.itens.map((item) => (
-                                                <Badge key={item} variant="outline">
-                                                    {item}
-                                                </Badge>
-                                            ))}
+                                            {Array.isArray(record.itens) && record.itens.length > 0 ? (
+                                                record.itens.map((item) => (
+                                                    <Badge key={item} variant="outline">
+                                                        {item}
+                                                    </Badge>
+                                                ))) : (
+                                                <span className="text-sm text-gray-500">Nenhum item selecionado</span>
+                                            )}
                                         </div>
                                     </div>
 
@@ -244,6 +271,49 @@ export default function AdminPage() {
                                         <Trash2 size={16} className="mr-2" />
                                         Deletar
                                     </Button>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                ) : viewMode === 'stock' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {stock.map((item) => (
+                            <Card key={item.id} className="hover:shadow-md transition">
+                                <CardHeader className="pb-2">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <CardTitle className="text-lg">{item.item_name}</CardTitle>
+                                            <Badge variant="outline" className="mt-1">{item.category}</Badge>
+                                        </div>
+                                        <Badge variant={item.quantity > 0 ? 'default' : 'destructive'}>
+                                            {item.quantity} un
+                                        </Badge>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => handleUpdateStock(item.item_name, Math.max(0, item.quantity - 1))}
+                                        >
+                                            -
+                                        </Button>
+                                        <Input
+                                            type="number"
+                                            value={item.quantity}
+                                            onChange={(e) => handleUpdateStock(item.item_name, parseInt(e.target.value) || 0)}
+                                            className="w-20 text-center"
+                                        />
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => handleUpdateStock(item.item_name, item.quantity + 1)}
+                                        >
+                                            +
+                                        </Button>
+                                    </div>
+                                    <p className="text-xs text-gray-400 mt-2">Inicial: {item.initial_quantity}</p>
                                 </CardContent>
                             </Card>
                         ))}
