@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chá de Fraldas - Presença</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="balloon balloon-pink"></div>
+            <div class="balloon balloon-blue"></div>
+            <div class="balloon balloon-yellow"></div>
+
+            <h1 class="title">🍼 Chá de Fraldas 🍼</h1>
+            <p class="subtitle">Festa Especial de Boas-vindas</p>
+
+            <div class="event-details">
+                <div class="detail-item">
+                    <span class="icon">📅</span>
+                    <span>14 de Março de 2025</span>
+                </div>
+                <div class="detail-item">
+                    <span class="icon">⏰</span>
+                    <span>11:00</span>
+                </div>
+                <div class="detail-item">
+                    <span class="icon">📍</span>
+                    <span>Recanto de Luz Espaço</span>
+                </div>
+            </div>
+
+            <a href="https://www.google.com/maps/search/Recanto+de+Luz+Espaço,+Rua+Vicente+Rosal+Ferreira+Leite,+125+-+Jangurussu,+Fortaleza+-+CE,+60540-272"
+                target="_blank" class="address-link">
+                <p class="address">
+                    📍 Rua Vicente Rosal Ferreira Leite, 125 - Jangurussu, Fortaleza - CE, 60540-272
+                    <span class="map-icon">🗺️ Abrir no Mapa</span>
+                </p>
+            </a>
+        </div>
+
+        <!-- Main Form -->
+        <form id="attendanceForm" class="form-container">
+            <!-- Nome -->
+            <div class="form-section">
+                <label for="name" class="label-title">Seu Nome</label>
+                <input type="text" id="name" name="name" class="input-field" placeholder="Digite seu nome completo"
+                    required>
+            </div>
+
+            <!-- Presença -->
+            <div class="form-section">
+                <label class="label-title">Confirmação de Presença</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="attendance" value="sim" required>
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">✨ Vou Comparecer</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="attendance" value="nao">
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">😢 Não Poderei Comparecer</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Seleção de Itens -->
+            <div class="form-section">
+                <label class="label-title">📦 O Que Você Deseja Levar?</label>
+                <p class="section-subtitle">Selecione uma ou mais opções</p>
+
+                <!-- Abas -->
+                <div class="tabs-container">
+                    <button type="button" class="tab-btn active" data-tab="fraldas">🍼 Fraldas (60)</button>
+                    <button type="button" class="tab-btn" data-tab="berco">🛏️ Berço</button>
+                    <button type="button" class="tab-btn" data-tab="roupas">👕 Roupas</button>
+                    <button type="button" class="tab-btn" data-tab="higiene">🧼 Higiene</button>
+                </div>
+
+                <!-- TAB: FRALDAS -->
+                <div id="fraldas" class="tab-content active">
+                    <div class="checkbox-grid">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="5 Fraldas P">
+                            <span class="checkbox-custom"></span>
+                            <span>5 Fraldas P</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="13 Fraldas M">
+                            <span class="checkbox-custom"></span>
+                            <span>13 Fraldas M</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="17 Fraldas G">
+                            <span class="checkbox-custom"></span>
+                            <span>17 Fraldas G</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="25 Fraldas GG">
+                            <span class="checkbox-custom"></span>
+                            <span>25 Fraldas GG</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="3x Pacote Fralda de Pano (10un)">
+                            <span class="checkbox-custom"></span>
+                            <span>3x Pacote Fralda de Pano (10un)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- TAB: BERÇO -->
+                <div id="berco" class="tab-content">
+                    <div class="checkbox-grid">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Cobertor de Berço">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Cobertor de Berço</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Manta Micro Fibra">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Manta Micro Fibra</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Jogo de Lençol de Berço">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Jogo de Lençol de Berço</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="1x Móbile Safári">
+                            <span class="checkbox-custom"></span>
+                            <span>1x Móbile Safári</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Travesseiro Respirável">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Travesseiro Respirável</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="1x Ninho Redutor">
+                            <span class="checkbox-custom"></span>
+                            <span>1x Ninho Redutor</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="1x Kit Abajur">
+                            <span class="checkbox-custom"></span>
+                            <span>1x Kit Abajur</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Manta de Passeio">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Manta de Passeio</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- TAB: ROUPAS -->
+                <div id="roupas" class="tab-content">
+                    <div class="checkbox-grid">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="3x Babador">
+                            <span class="checkbox-custom"></span>
+                            <span>3x Babador</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="4x Bodies Manga Curta P">
+                            <span class="checkbox-custom"></span>
+                            <span>4x Bodies Manga Curta P</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="4x Bodies Manga Longa P">
+                            <span class="checkbox-custom"></span>
+                            <span>4x Bodies Manga Longa P</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="4x Bodies Manga Curta M">
+                            <span class="checkbox-custom"></span>
+                            <span>4x Bodies Manga Curta M</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="4x Bodies Manga Longa M">
+                            <span class="checkbox-custom"></span>
+                            <span>4x Bodies Manga Longa M</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="3x Cueiro">
+                            <span class="checkbox-custom"></span>
+                            <span>3x Cueiro</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Kit Mijões c/3 RN">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Kit Mijões c/3 RN</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Kit Mijões c/3 P">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Kit Mijões c/3 P</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="4x Macacões RN">
+                            <span class="checkbox-custom"></span>
+                            <span>4x Macacões RN</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="4x Macacões P">
+                            <span class="checkbox-custom"></span>
+                            <span>4x Macacões P</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="1x Kit c/3 Pares de Luva">
+                            <span class="checkbox-custom"></span>
+                            <span>1x Kit c/3 Pares de Luva</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Kit c/3 Pares de Meia">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Kit c/3 Pares de Meia</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="1x Saída da Maternidade">
+                            <span class="checkbox-custom"></span>
+                            <span>1x Saída da Maternidade</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Toalha com Capuz">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Toalha com Capuz</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Toalha de Fralda">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Toalha de Fralda</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- TAB: HIGIENE -->
+                <div id="higiene" class="tab-content">
+                    <div class="checkbox-grid">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="1x Aspirador Nasal">
+                            <span class="checkbox-custom"></span>
+                            <span>1x Aspirador Nasal</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="1x Kit de Mamadeira">
+                            <span class="checkbox-custom"></span>
+                            <span>1x Kit de Mamadeira</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="1x Kit Plástico s/Banheira">
+                            <span class="checkbox-custom"></span>
+                            <span>1x Kit Plástico s/Banheira</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="1x Kit Manicure p/Bebê">
+                            <span class="checkbox-custom"></span>
+                            <span>1x Kit Manicure p/Bebê</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="1x Kit Escova e Pente">
+                            <span class="checkbox-custom"></span>
+                            <span>1x Kit Escova e Pente</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="3x Lenço Umedecido">
+                            <span class="checkbox-custom"></span>
+                            <span>3x Lenço Umedecido</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="5x Sabonete Líquido">
+                            <span class="checkbox-custom"></span>
+                            <span>5x Sabonete Líquido</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="5x Pomada Bepantol Baby">
+                            <span class="checkbox-custom"></span>
+                            <span>5x Pomada Bepantol Baby</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="items" value="2x Talco">
+                            <span class="checkbox-custom"></span>
+                            <span>2x Talco</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Observações -->
+            <div class="form-section">
+                <label for="obs" class="label-title">Observações (Opcional)</label>
+                <textarea id="obs" name="observacoes" class="textarea-field"
+                    placeholder="Algo que gostaria de compartilhar?" rows="4"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn">
+                <span class="btn-icon">💌</span>
+                <span class="btn-text">Confirmar Presença</span>
+                <span class="btn-sparkle">✨</span>
+            </button>
+        </form>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message hidden">
+            <div class="success-content">
+                <div class="confetti"></div>
+                <h2>🎉 Obrigada!</h2>
+                <p>Sua presença foi confirmada com sucesso!</p>
+                <p class="success-details" id="successDetails"></p>
+                <button type="button" class="reset-btn" onclick="resetForm()">Registrar Outra Presença</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Link -->
+    <div class="admin-footer">
+        <a href="admin.html" class="admin-link">🔐 Área do Administrador</a>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
