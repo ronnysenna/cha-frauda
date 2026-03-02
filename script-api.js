@@ -100,12 +100,13 @@ async function increaseStock(itemName) {
 
 // Adicionar event listeners para checkboxes
 document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-  checkbox.addEventListener("change", function () {
-    const itemName = this.value;
+  checkbox.addEventListener("change", async function () {
+    const itemName = this.getAttribute("data-item");
+
     if (this.checked) {
-      reduceStock(itemName);
+      await reduceStock(itemName);
     } else {
-      increaseStock(itemName);
+      await increaseStock(itemName);
     }
   });
 });
@@ -115,92 +116,72 @@ window.addEventListener("load", function () {
   loadStock();
 });
 
-// ===== FORM SUBMISSION =====
+// ===== VALIDAÇÃO E ENVIO DO FORMULÁRIO =====
 document
   .getElementById("attendanceForm")
-  .addEventListener("submit", async function (e) {
+  ?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Obter dados do formulário
-    const formData = new FormData(this);
-    const name = formData.get("name");
-    const attendance = formData.get("attendance");
-    const observations = formData.get("observacoes");
+    const nome = document.getElementById("name").value.trim();
+    const presenca = document.querySelector(
+      'input[name="presenca"]:checked'
+    ).value;
 
-    // Obter fraldas selecionadas
-    const selectedFraldas = [];
-    document
-      .querySelectorAll('input[name="fraldas"]:checked')
-      .forEach((checkbox) => {
-        selectedFraldas.push(checkbox.value);
-      });
+    // Validar itens selecionados
+    const itensCheckboxes = document.querySelectorAll(
+      'input[name="itens"]:checked'
+    );
 
-    // Obter mimos selecionados
-    const selectedMimos = [];
-    document
-      .querySelectorAll('input[name="mimos"]:checked')
-      .forEach((checkbox) => {
-        selectedMimos.push(checkbox.value);
-      });
-
-    // Validações
-    if (!name.trim()) {
-      showAlert("Por favor, digite seu nome!");
+    if (itensCheckboxes.length === 0) {
+      showAlert("❌ Selecione pelo menos um item!");
       return;
     }
 
-    if (!attendance) {
-      showAlert("Por favor, confirme sua presença!");
-      return;
-    }
+    const itens = Array.from(itensCheckboxes)
+      .map((cb) => cb.getAttribute("data-item"))
+      .join(", ");
 
-    if (attendance === "sim") {
-      if (selectedFraldas.length === 0) {
-        showAlert("⚠️ Por favor, selecione pelo menos uma FRALDA!");
-        return;
-      }
-
-      if (selectedMimos.length === 0) {
-        showAlert(
-          "⚠️ Por favor, selecione pelo menos um MIMO (Berço, Roupas ou Higiene)!"
-        );
-        return;
-      }
-    }
-
-    // Combinar fraldas e mimos
-    const allItems = [...selectedFraldas, ...selectedMimos];
+    const observacoes =
+      document.getElementById("observations").value.trim() || "Nenhuma";
 
     // Preparar dados
-    const registroData = {
-      nome: name,
-      presenca: attendance === "sim" ? "Sim" : "Não",
-      itens: allItems.length > 0 ? allItems.join(", ") : "Não informado",
-      observacoes: observations || "Nenhuma",
+    const data = {
+      nome,
+      presenca,
+      itens: presenca === "Sim" ? itens : "Não selecionou",
+      observacoes,
     };
 
-    // Salvar no banco de dados
     try {
+      // Enviar para API
       const response = await fetch(`${API_URL}/records`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(registroData),
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        // Salvar também no localStorage para backup
-        saveToLocalStorage(registroData);
+        // Backup no localStorage
+        saveToLocalStorage(data);
 
-        // Mostrar mensagem de sucesso
-        showSuccessMessage(registroData);
+        // Mostrar sucesso
+        showSuccessMessage({
+          ...data,
+          data_registro: new Date().toLocaleString("pt-BR"),
+        });
+
+        // Resetar formulário
+        setTimeout(resetForm, 2000);
       } else {
-        showAlert("Erro ao salvar registro: " + result.error);
+        showAlert("❌ Erro ao salvar registro: " + result.error);
       }
     } catch (err) {
       console.error(err);
-      showAlert("Erro de conexão: " + err.message);
+      showAlert("❌ Erro de conexão: " + err.message);
+      // Fallback: salvar localmente
+      saveToLocalStorage(data);
     }
   });
 

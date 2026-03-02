@@ -165,13 +165,20 @@ app.post("/api/stock/initialize", async (req, res) => {
 
 // 6️⃣ POST - Reduzir quantidade de um item
 app.post("/api/stock/reduce", async (req, res) => {
-  const { item_name } = req.body;
+  const { item_name, quantidade = 1 } = req.body;
 
   try {
     const result = await pool.query(
-      "UPDATE item_stock SET quantity = GREATEST(quantity - 1, 0), last_updated = CURRENT_TIMESTAMP WHERE item_name = $1 RETURNING *",
-      [item_name]
+      "UPDATE item_stock SET quantity = GREATEST(quantity - $1, 0), last_updated = CURRENT_TIMESTAMP WHERE item_name = $2 RETURNING *",
+      [quantidade, item_name]
     );
+
+    if (result.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Item não encontrado" });
+    }
+
     res.json({ success: true, data: result.rows[0] });
   } catch (err) {
     console.error(err);
@@ -181,13 +188,20 @@ app.post("/api/stock/reduce", async (req, res) => {
 
 // 7️⃣ POST - Aumentar quantidade de um item
 app.post("/api/stock/increase", async (req, res) => {
-  const { item_name } = req.body;
+  const { item_name, quantidade = 1 } = req.body;
 
   try {
     const result = await pool.query(
-      "UPDATE item_stock SET quantity = quantity + 1, last_updated = CURRENT_TIMESTAMP WHERE item_name = $1 RETURNING *",
-      [item_name]
+      "UPDATE item_stock SET quantity = quantity + $1, last_updated = CURRENT_TIMESTAMP WHERE item_name = $2 RETURNING *",
+      [quantidade, item_name]
     );
+
+    if (result.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Item não encontrado" });
+    }
+
     res.json({ success: true, data: result.rows[0] });
   } catch (err) {
     console.error(err);
