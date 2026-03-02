@@ -317,11 +317,42 @@
             margin-bottom: 15px;
             border-radius: 12px;
             transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
         .record-card:hover {
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             transform: translateX(5px);
+        }
+
+        .record-content {
+            flex: 1;
+        }
+
+        .record-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 15px;
+        }
+
+        .btn-delete {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-delete:hover {
+            background-color: #ee5a52;
+            transform: scale(1.05);
         }
 
         .record-name {
@@ -421,6 +452,20 @@
                 width: 50px;
                 height: 50px;
                 font-size: 1.2em;
+            }
+
+            .record-card {
+                flex-direction: column;
+            }
+
+            .record-actions {
+                margin-left: 0;
+                margin-top: 15px;
+                width: 100%;
+            }
+
+            .btn-delete {
+                width: 100%;
             }
         }
 
@@ -522,9 +567,10 @@
                                 <tr>
                                     <th>Nome</th>
                                     <th>Presença</th>
-                                    <th>Fraldas</th>
+                                    <th>Itens</th>
                                     <th>Observações</th>
                                     <th>Data do Registro</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
@@ -537,8 +583,8 @@
     </div>
 
     <script>
-        // PIN PADRÃO: 1234 (Você pode mudar isso)
-        const CORRECT_PIN = "1234";
+        // PIN PADRÃO: 2778 (Você pode mudar isso)
+        const CORRECT_PIN = "2778";
 
         // Handle PIN Input
         const pinInputs = document.querySelectorAll('.pin-digit');
@@ -643,28 +689,33 @@
                 const card = document.createElement('div');
                 card.className = 'record-card';
                 card.innerHTML = `
-                    <div class="record-name">${index + 1}. ${record.nome}</div>
-                    <div class="record-details">
-                        <div class="record-detail">
-                            <strong>Presença:</strong> 
-                            <span class="badge badge-${record.presenca === 'Sim' ? 'sim' : 'nao'}">
-                                ${record.presenca}
-                            </span>
+                    <div class="record-content">
+                        <div class="record-name">${index + 1}. ${record.nome}</div>
+                        <div class="record-details">
+                            <div class="record-detail">
+                                <strong>Presença:</strong> 
+                                <span class="badge badge-${record.presenca === 'Sim' ? 'sim' : 'nao'}">
+                                    ${record.presenca}
+                                </span>
+                            </div>
+                            <div class="record-detail">
+                                <strong>Data:</strong> ${record.data_registro}
+                            </div>
                         </div>
-                        <div class="record-detail">
-                            <strong>Data:</strong> ${record.data_registro}
-                        </div>
+                        ${record.presenca === 'Sim' ? `
+                            <div class="record-detail" style="margin-top: 10px;">
+                                <strong>Itens:</strong> ${record.itens}
+                            </div>
+                        ` : ''}
+                        ${record.observacoes !== 'Nenhuma' ? `
+                            <div class="record-detail" style="margin-top: 10px;">
+                                <strong>Observações:</strong> ${record.observacoes}
+                            </div>
+                        ` : ''}
                     </div>
-                    ${record.presenca === 'Sim' ? `
-                        <div class="record-detail" style="margin-top: 10px;">
-                            <strong>Itens:</strong> ${record.itens}
-                        </div>
-                    ` : ''}
-                    ${record.observacoes !== 'Nenhuma' ? `
-                        <div class="record-detail" style="margin-top: 10px;">
-                            <strong>Observações:</strong> ${record.observacoes}
-                        </div>
-                    ` : ''}
+                    <div class="record-actions">
+                        <button class="btn-delete" onclick="deletarRegistro(${index})">🗑️ Deletar</button>
+                    </div>
                 `;
                 recordsList.appendChild(card);
 
@@ -676,6 +727,7 @@
                     <td>${record.presenca === 'Sim' ? record.itens : '-'}</td>
                     <td>${record.observacoes !== 'Nenhuma' ? record.observacoes : '-'}</td>
                     <td>${record.data_registro}</td>
+                    <td><button class="btn-delete" onclick="deletarRegistro(${index})">🗑️ Deletar</button></td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -762,6 +814,18 @@
             setTimeout(() => {
                 msg.style.display = 'none';
             }, 3000);
+        }
+
+        function deletarRegistro(index) {
+            const records = JSON.parse(localStorage.getItem('attendanceRecords')) || [];
+            const nome = records[index].nome;
+
+            if (confirm(`⚠️ Tem certeza que deseja deletar o registro de "${nome}"?\n\nEsta ação não pode ser desfeita!`)) {
+                records.splice(index, 1);
+                localStorage.setItem('attendanceRecords', JSON.stringify(records));
+                reloadData();
+                alert(`✅ Registro de "${nome}" foi deletado com sucesso!`);
+            }
         }
 
         // Focus first input on load
