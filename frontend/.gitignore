@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# LOCK FILES SHOULD NOT BE IGNORED
+!package-lock.json
+!yarn.lock
+!pnpm-lock.yaml
