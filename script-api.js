@@ -1,65 +1,56 @@
-// ===== SISTEMA DE ESTOQUE DINÂMICO =====
-// Quantidades iniciais dos itens
-const initialStock = {
-  "Fraldas P": 5,
-  "Fraldas M": 13,
-  "Fraldas G": 17,
-  "Fraldas GG": 25,
-  "Pacote Fralda de Pano": 3,
-  "Cobertor de Berço": 2,
-  "Manta Micro Fibra": 2,
-  "Jogo de Lençol de Berço": 2,
-  "Móbile Safári": 1,
-  "Travesseiro Respirável": 2,
-  "Ninho Redutor": 1,
-  "Kit Abajur": 1,
-  "Manta de Passeio": 2,
-  Babador: 3,
-  "Bodies Manga Curta P": 4,
-  "Bodies Manga Longa P": 4,
-  "Bodies Manga Curta M": 4,
-  "Bodies Manga Longa M": 4,
-  Cueiro: 3,
-  "Kit Mijões c/3 RN": 2,
-  "Kit Mijões c/3 P": 2,
-  "Macacões RN": 4,
-  "Macacões P": 4,
-  "Kit c/3 Pares de Luva": 1,
-  "Kit c/3 Pares de Meia": 2,
-  "Saída da Maternidade": 1,
-  "Toalha com Capuz": 2,
-  "Toalha de Fralda": 2,
-  "Aspirador Nasal": 1,
-  "Kit de Mamadeira": 1,
-  "Kit Plástico s/Banheira": 1,
-  "Kit Manicure p/Bebê": 1,
-  "Kit Escova e Pente": 1,
-  "Lenço Umedecido": 3,
-  "Sabonete Líquido": 5,
-  "Pomada Bepantol Baby": 5,
-  Talco: 2,
-};
+// ===== CONFIGURAÇÃO DA API =====
+const API_URL = "http://localhost:3000/api"; // Mude para seu domínio em produção
 
-// Carregar estoque ao iniciar a página
-function loadStock() {
-  let currentStock = localStorage.getItem("itemStock");
+// ===== SISTEMA DE ESTOQUE DINÂMICO (BANCO DE DADOS) =====
 
-  if (!currentStock) {
-    // Se não existe, usar estoque inicial
-    currentStock = initialStock;
-    localStorage.setItem("itemStock", JSON.stringify(currentStock));
-  } else {
-    currentStock = JSON.parse(currentStock);
+// Carregar estoque do servidor
+async function loadStock() {
+  try {
+    const response = await fetch(`${API_URL}/stock`);
+    const result = await response.json();
+
+    if (result.success && result.data.length > 0) {
+      updateStockDisplay(result.data);
+    } else {
+      console.log("Estoque vazio, inicializando...");
+      await initializeStock();
+    }
+  } catch (err) {
+    console.error("Erro ao carregar estoque:", err);
+    showAlert("⚠️ Erro ao carregar estoque. Usando dados locais.");
   }
+}
 
-  updateStockDisplay(currentStock);
+// Inicializar estoque na primeira vez
+async function initializeStock() {
+  try {
+    const response = await fetch(`${API_URL}/stock/initialize`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+    const result = await response.json();
+
+    if (result.success) {
+      console.log("✅ Estoque inicializado");
+      await loadStock();
+    }
+  } catch (err) {
+    console.error("Erro ao inicializar estoque:", err);
+  }
 }
 
 // Atualizar displays de quantidade
-function updateStockDisplay(stock) {
+function updateStockDisplay(stockData) {
+  const stockMap = {};
+
+  // Converter array em objeto para fácil acesso
+  stockData.forEach((item) => {
+    stockMap[item.item_name] = item.quantity;
+  });
+
   document.querySelectorAll(".item-quantity").forEach((el) => {
     const itemName = el.getAttribute("data-item");
-    const quantity = stock[itemName] || 0;
+    const quantity = stockMap[itemName] || 0;
     el.textContent = quantity;
 
     // Mudar cor se quantidade está baixa
@@ -74,25 +65,36 @@ function updateStockDisplay(stock) {
 }
 
 // Reduzir quantidade quando item é marcado
-function reduceStock(itemName) {
-  let stock = JSON.parse(localStorage.getItem("itemStock")) || initialStock;
+async function reduceStock(itemName) {
+  try {
+    const response = await fetch(`${API_URL}/stock/reduce`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ item_name: itemName }),
+    });
 
-  if (stock[itemName] > 0) {
-    stock[itemName]--;
-    localStorage.setItem("itemStock", JSON.stringify(stock));
-    updateStockDisplay(stock);
+    if (response.ok) {
+      await loadStock(); // Recarregar estoque
+    }
+  } catch (err) {
+    console.error("Erro ao reduzir estoque:", err);
   }
 }
 
 // Aumentar quantidade quando item é desmarcado
-function increaseStock(itemName) {
-  let stock = JSON.parse(localStorage.getItem("itemStock")) || initialStock;
-  const maxStock = initialStock[itemName] || 0;
+async function increaseStock(itemName) {
+  try {
+    const response = await fetch(`${API_URL}/stock/increase`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ item_name: itemName }),
+    });
 
-  if (stock[itemName] < maxStock) {
-    stock[itemName]++;
-    localStorage.setItem("itemStock", JSON.stringify(stock));
-    updateStockDisplay(stock);
+    if (response.ok) {
+      await loadStock(); // Recarregar estoque
+    }
+  } catch (err) {
+    console.error("Erro ao aumentar estoque:", err);
   }
 }
 
@@ -116,7 +118,7 @@ window.addEventListener("load", function () {
 // ===== FORM SUBMISSION =====
 document
   .getElementById("attendanceForm")
-  .addEventListener("submit", function (e) {
+  .addEventListener("submit", async function (e) {
     e.preventDefault();
 
     // Obter dados do formulário
@@ -175,25 +177,41 @@ document
       presenca: attendance === "sim" ? "Sim" : "Não",
       itens: allItems.length > 0 ? allItems.join(", ") : "Não informado",
       observacoes: observations || "Nenhuma",
-      data_registro: new Date().toLocaleString("pt-BR"),
     };
 
-    // Salvar no localStorage
-    saveToStorage(registroData);
+    // Salvar no banco de dados
+    try {
+      const response = await fetch(`${API_URL}/records`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(registroData),
+      });
 
-    // Mostrar mensagem de sucesso
-    showSuccessMessage(registroData);
+      const result = await response.json();
+
+      if (result.success) {
+        // Salvar também no localStorage para backup
+        saveToLocalStorage(registroData);
+
+        // Mostrar mensagem de sucesso
+        showSuccessMessage(registroData);
+      } else {
+        showAlert("Erro ao salvar registro: " + result.error);
+      }
+    } catch (err) {
+      console.error(err);
+      showAlert("Erro de conexão: " + err.message);
+    }
   });
 
-// ===== FUNÇÕES DE ARMAZENAMENTO =====
-function saveToStorage(data) {
+// ===== SALVAR BACKUP NO LOCALSTORAGE =====
+function saveToLocalStorage(data) {
   let registros = JSON.parse(localStorage.getItem("attendanceRecords")) || [];
-  registros.push(data);
+  registros.push({
+    ...data,
+    data_registro: new Date().toLocaleString("pt-BR"),
+  });
   localStorage.setItem("attendanceRecords", JSON.stringify(registros));
-
-  // Log para debug
-  console.log("Registro salvo:", data);
-  console.log("Total de registros:", registros.length);
 }
 
 // ===== MOSTRAR MENSAGEM DE SUCESSO =====
@@ -353,69 +371,68 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
 
 // ===== CONTROLES DE DESENVOLVIMENTO =====
 // Função para visualizar registros (abrir console e digitar: visualizarRegistros())
-function visualizarRegistros() {
-  const registros = JSON.parse(localStorage.getItem("attendanceRecords")) || [];
-  console.table(registros);
-  return registros;
+async function visualizarRegistros() {
+  try {
+    const response = await fetch(`${API_URL}/records`);
+    const result = await response.json();
+    console.table(result.data);
+    return result.data;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 // Função para exportar dados como CSV
-function exportarCSV() {
-  const registros = JSON.parse(localStorage.getItem("attendanceRecords")) || [];
+async function exportarCSV() {
+  try {
+    const response = await fetch(`${API_URL}/records`);
+    const result = await response.json();
+    const registros = result.data;
 
-  if (registros.length === 0) {
-    alert("Nenhum registro para exportar!");
-    return;
-  }
+    if (registros.length === 0) {
+      alert("Nenhum registro para exportar!");
+      return;
+    }
 
-  let csv = "Nome,Presença,Itens,Observações,Data do Registro\n";
+    let csv = "Nome,Presença,Itens,Observações,Data do Registro\n";
 
-  registros.forEach((registro) => {
-    csv += `"${registro.nome}","${registro.presenca}","${registro.itens}","${registro.observacoes}","${registro.data_registro}"\n`;
-  });
+    registros.forEach((registro) => {
+      csv += `"${registro.nome}","${registro.presenca}","${registro.itens}","${registro.observacoes}","${registro.data_registro}"\n`;
+    });
 
-  // Criar blob e download
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  const url = URL.createObjectURL(blob);
+    // Criar blob e download
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
 
-  link.setAttribute("href", url);
-  link.setAttribute(
-    "download",
-    `presencas_cha_fraldas_${new Date().toISOString().split("T")[0]}.csv`
-  );
-  link.style.visibility = "hidden";
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `presencas_cha_fraldas_${new Date().toISOString().split("T")[0]}.csv`
+    );
+    link.style.visibility = "hidden";
 
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-  console.log(`✅ ${registros.length} registros exportados com sucesso!`);
-}
-
-// Função para limpar todos os registros (cuidado!)
-function limparRegistros() {
-  if (confirm("⚠️ Tem certeza? Esta ação não pode ser desfeita!")) {
-    localStorage.removeItem("attendanceRecords");
-    console.log("✅ Todos os registros foram deletados!");
+    console.log(`✅ ${registros.length} registros exportados com sucesso!`);
+  } catch (err) {
+    console.error(err);
   }
 }
 
-// Mensagem no console
-console.log(
-  "%c🍼 Bem-vindo ao Chá de Fraldas! 🍼",
-  "font-size: 20px; color: #ff69b4; font-weight: bold;"
-);
-console.log(
-  "%cComandos disponíveis:",
-  "font-size: 14px; color: #ff69b4; font-weight: bold;"
-);
-console.log(
-  "%cvissualizarRegistros() - Ver todos os registros",
-  "color: #666;"
-);
-console.log("%cexportarCSV() - Exportar dados como CSV", "color: #666;");
-console.log(
-  "%climparRegistros() - Deletar todos os registros (⚠️)",
-  "color: #ff6b6b;"
-);
+// Função para visualizar stats
+async function visualizarStats() {
+  try {
+    const response = await fetch(`${API_URL}/stats`);
+    const result = await response.json();
+    console.log(result.data);
+    return result.data;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+console.log("✅ Script carregado com sucesso!");
+console.log("💡 Use: visualizarRegistros(), exportarCSV(), visualizarStats()");

@@ -242,6 +242,16 @@ body {
   animation-delay: 0.4s;
 }
 
+.featured-section {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 144, 255, 0.08) 0%,
+    rgba(65, 105, 225, 0.08) 100%
+  );
+  border: 2px solid var(--primary-pink);
+  box-shadow: 0 0 20px rgba(30, 144, 255, 0.15);
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -438,6 +448,18 @@ body {
   color: white;
   font-weight: bold;
   font-size: 1.1em;
+}
+
+.item-quantity {
+  background: #1e90ff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85em;
+  margin-left: auto;
+  min-width: 40px;
+  text-align: center;
 }
 
 .brand-name {

@@ -69,92 +69,110 @@
                 </div>
             </div>
 
-            <!-- Seleção de Itens -->
-            <div class="form-section">
-                <label class="label-title">📦 O Que Você Deseja Levar?</label>
-                <p class="section-subtitle">Selecione uma ou mais opções</p>
+            <!-- Seleção de Fraldas - OBRIGATÓRIO -->
+            <div class="form-section featured-section">
+                <label class="label-title required">🍼 Escolha uma Fralda <span class="required-badge">* Obrigatório -
+                        Escolha no mínimo 1</span></label>
+                <p class="section-subtitle">Selecione pelo menos um tipo de fralda. As quantidades diminuem conforme os
+                    registros.</p>
+                <div class="checkbox-grid">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="fraldas" value="Fraldas P">
+                        <span class="checkbox-custom"></span>
+                        <span>Fraldas P</span>
+                        <span class="item-quantity" data-item="Fraldas P">5</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="fraldas" value="Fraldas M">
+                        <span class="checkbox-custom"></span>
+                        <span>Fraldas M</span>
+                        <span class="item-quantity" data-item="Fraldas M">13</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="fraldas" value="Fraldas G">
+                        <span class="checkbox-custom"></span>
+                        <span>Fraldas G</span>
+                        <span class="item-quantity" data-item="Fraldas G">17</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="fraldas" value="Fraldas GG">
+                        <span class="checkbox-custom"></span>
+                        <span>Fraldas GG</span>
+                        <span class="item-quantity" data-item="Fraldas GG">25</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="fraldas" value="Pacote Fralda de Pano">
+                        <span class="checkbox-custom"></span>
+                        <span>Pacote Fralda de Pano</span>
+                        <span class="item-quantity" data-item="Pacote Fralda de Pano">3</span>
+                    </label>
+                </div>
+            </div>
 
-                <!-- Abas -->
+            <!-- Seleção de Mimos - OBRIGATÓRIO -->
+            <div class="form-section featured-section">
+                <label class="label-title required">🎁 Escolha um Mimo <span class="required-badge">* Obrigatório -
+                        Escolha no mínimo 1</span></label>
+                <p class="section-subtitle">Selecione pelo menos um item das categorias abaixo. As quantidades diminuem
+                    conforme os registros.</p>
+
+                <!-- Abas para Mimos -->
                 <div class="tabs-container">
-                    <button type="button" class="tab-btn active" data-tab="fraldas">🍼 Fraldas (60)</button>
-                    <button type="button" class="tab-btn" data-tab="berco">🛏️ Berço</button>
+                    <button type="button" class="tab-btn active" data-tab="berco">🛏️ Berço</button>
                     <button type="button" class="tab-btn" data-tab="roupas">👕 Roupas</button>
                     <button type="button" class="tab-btn" data-tab="higiene">🧼 Higiene</button>
                 </div>
 
-                <!-- TAB: FRALDAS -->
-                <div id="fraldas" class="tab-content active">
-                    <div class="checkbox-grid">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="5 Fraldas P">
-                            <span class="checkbox-custom"></span>
-                            <span>5 Fraldas P</span>
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="13 Fraldas M">
-                            <span class="checkbox-custom"></span>
-                            <span>13 Fraldas M</span>
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="17 Fraldas G">
-                            <span class="checkbox-custom"></span>
-                            <span>17 Fraldas G</span>
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="25 Fraldas GG">
-                            <span class="checkbox-custom"></span>
-                            <span>25 Fraldas GG</span>
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="3x Pacote Fralda de Pano (10un)">
-                            <span class="checkbox-custom"></span>
-                            <span>3x Pacote Fralda de Pano (10un)</span>
-                        </label>
-                    </div>
-                </div>
-
                 <!-- TAB: BERÇO -->
-                <div id="berco" class="tab-content">
+                <div id="berco" class="tab-content active">
                     <div class="checkbox-grid">
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Cobertor de Berço">
+                            <input type="checkbox" name="mimos" value="Cobertor de Berço">
                             <span class="checkbox-custom"></span>
-                            <span>2x Cobertor de Berço</span>
+                            <span>Cobertor de Berço</span>
+                            <span class="item-quantity" data-item="Cobertor de Berço">2</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Manta Micro Fibra">
+                            <input type="checkbox" name="mimos" value="Manta Micro Fibra">
                             <span class="checkbox-custom"></span>
-                            <span>2x Manta Micro Fibra</span>
+                            <span>Manta Micro Fibra</span>
+                            <span class="item-quantity" data-item="Manta Micro Fibra">2</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Jogo de Lençol de Berço">
+                            <input type="checkbox" name="mimos" value="Jogo de Lençol de Berço">
                             <span class="checkbox-custom"></span>
-                            <span>2x Jogo de Lençol de Berço</span>
+                            <span>Jogo de Lençol de Berço</span>
+                            <span class="item-quantity" data-item="Jogo de Lençol de Berço">2</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="1x Móbile Safári">
+                            <input type="checkbox" name="mimos" value="Móbile Safári">
                             <span class="checkbox-custom"></span>
-                            <span>1x Móbile Safári</span>
+                            <span>Móbile Safári</span>
+                            <span class="item-quantity" data-item="Móbile Safári">1</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Travesseiro Respirável">
+                            <input type="checkbox" name="mimos" value="Travesseiro Respirável">
                             <span class="checkbox-custom"></span>
-                            <span>2x Travesseiro Respirável</span>
+                            <span>Travesseiro Respirável</span>
+                            <span class="item-quantity" data-item="Travesseiro Respirável">2</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="1x Ninho Redutor">
+                            <input type="checkbox" name="mimos" value="Ninho Redutor">
                             <span class="checkbox-custom"></span>
-                            <span>1x Ninho Redutor</span>
+                            <span>Ninho Redutor</span>
+                            <span class="item-quantity" data-item="Ninho Redutor">1</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="1x Kit Abajur">
+                            <input type="checkbox" name="mimos" value="Kit Abajur">
                             <span class="checkbox-custom"></span>
-                            <span>1x Kit Abajur</span>
+                            <span>Kit Abajur</span>
+                            <span class="item-quantity" data-item="Kit Abajur">1</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Manta de Passeio">
+                            <input type="checkbox" name="mimos" value="Manta de Passeio">
                             <span class="checkbox-custom"></span>
-                            <span>2x Manta de Passeio</span>
+                            <span>Manta de Passeio</span>
+                            <span class="item-quantity" data-item="Manta de Passeio">2</span>
                         </label>
                     </div>
                 </div>
@@ -163,79 +181,94 @@
                 <div id="roupas" class="tab-content">
                     <div class="checkbox-grid">
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="3x Babador">
+                            <input type="checkbox" name="mimos" value="Babador">
                             <span class="checkbox-custom"></span>
-                            <span>3x Babador</span>
+                            <span>Babador</span>
+                            <span class="item-quantity" data-item="Babador">3</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="4x Bodies Manga Curta P">
+                            <input type="checkbox" name="mimos" value="Bodies Manga Curta P">
                             <span class="checkbox-custom"></span>
-                            <span>4x Bodies Manga Curta P</span>
+                            <span>Bodies Manga Curta P</span>
+                            <span class="item-quantity" data-item="Bodies Manga Curta P">4</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="4x Bodies Manga Longa P">
+                            <input type="checkbox" name="mimos" value="Bodies Manga Longa P">
                             <span class="checkbox-custom"></span>
-                            <span>4x Bodies Manga Longa P</span>
+                            <span>Bodies Manga Longa P</span>
+                            <span class="item-quantity" data-item="Bodies Manga Longa P">4</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="4x Bodies Manga Curta M">
+                            <input type="checkbox" name="mimos" value="Bodies Manga Curta M">
                             <span class="checkbox-custom"></span>
-                            <span>4x Bodies Manga Curta M</span>
+                            <span>Bodies Manga Curta M</span>
+                            <span class="item-quantity" data-item="Bodies Manga Curta M">4</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="4x Bodies Manga Longa M">
+                            <input type="checkbox" name="mimos" value="Bodies Manga Longa M">
                             <span class="checkbox-custom"></span>
-                            <span>4x Bodies Manga Longa M</span>
+                            <span>Bodies Manga Longa M</span>
+                            <span class="item-quantity" data-item="Bodies Manga Longa M">4</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="3x Cueiro">
+                            <input type="checkbox" name="mimos" value="Cueiro">
                             <span class="checkbox-custom"></span>
-                            <span>3x Cueiro</span>
+                            <span>Cueiro</span>
+                            <span class="item-quantity" data-item="Cueiro">3</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Kit Mijões c/3 RN">
+                            <input type="checkbox" name="mimos" value="Kit Mijões c/3 RN">
                             <span class="checkbox-custom"></span>
-                            <span>2x Kit Mijões c/3 RN</span>
+                            <span>Kit Mijões c/3 RN</span>
+                            <span class="item-quantity" data-item="Kit Mijões c/3 RN">2</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Kit Mijões c/3 P">
+                            <input type="checkbox" name="mimos" value="Kit Mijões c/3 P">
                             <span class="checkbox-custom"></span>
-                            <span>2x Kit Mijões c/3 P</span>
+                            <span>Kit Mijões c/3 P</span>
+                            <span class="item-quantity" data-item="Kit Mijões c/3 P">2</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="4x Macacões RN">
+                            <input type="checkbox" name="mimos" value="Macacões RN">
                             <span class="checkbox-custom"></span>
-                            <span>4x Macacões RN</span>
+                            <span>Macacões RN</span>
+                            <span class="item-quantity" data-item="Macacões RN">4</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="4x Macacões P">
+                            <input type="checkbox" name="mimos" value="Macacões P">
                             <span class="checkbox-custom"></span>
-                            <span>4x Macacões P</span>
+                            <span>Macacões P</span>
+                            <span class="item-quantity" data-item="Macacões P">4</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="1x Kit c/3 Pares de Luva">
+                            <input type="checkbox" name="mimos" value="Kit c/3 Pares de Luva">
                             <span class="checkbox-custom"></span>
-                            <span>1x Kit c/3 Pares de Luva</span>
+                            <span>Kit c/3 Pares de Luva</span>
+                            <span class="item-quantity" data-item="Kit c/3 Pares de Luva">1</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Kit c/3 Pares de Meia">
+                            <input type="checkbox" name="mimos" value="Kit c/3 Pares de Meia">
                             <span class="checkbox-custom"></span>
-                            <span>2x Kit c/3 Pares de Meia</span>
+                            <span>Kit c/3 Pares de Meia</span>
+                            <span class="item-quantity" data-item="Kit c/3 Pares de Meia">2</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="1x Saída da Maternidade">
+                            <input type="checkbox" name="mimos" value="Saída da Maternidade">
                             <span class="checkbox-custom"></span>
-                            <span>1x Saída da Maternidade</span>
+                            <span>Saída da Maternidade</span>
+                            <span class="item-quantity" data-item="Saída da Maternidade">1</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Toalha com Capuz">
+                            <input type="checkbox" name="mimos" value="Toalha com Capuz">
                             <span class="checkbox-custom"></span>
-                            <span>2x Toalha com Capuz</span>
+                            <span>Toalha com Capuz</span>
+                            <span class="item-quantity" data-item="Toalha com Capuz">2</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Toalha de Fralda">
+                            <input type="checkbox" name="mimos" value="Toalha de Fralda">
                             <span class="checkbox-custom"></span>
-                            <span>2x Toalha de Fralda</span>
+                            <span>Toalha de Fralda</span>
+                            <span class="item-quantity" data-item="Toalha de Fralda">2</span>
                         </label>
                     </div>
                 </div>
@@ -244,49 +277,58 @@
                 <div id="higiene" class="tab-content">
                     <div class="checkbox-grid">
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="1x Aspirador Nasal">
+                            <input type="checkbox" name="mimos" value="Aspirador Nasal">
                             <span class="checkbox-custom"></span>
-                            <span>1x Aspirador Nasal</span>
+                            <span>Aspirador Nasal</span>
+                            <span class="item-quantity" data-item="Aspirador Nasal">1</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="1x Kit de Mamadeira">
+                            <input type="checkbox" name="mimos" value="Kit de Mamadeira">
                             <span class="checkbox-custom"></span>
-                            <span>1x Kit de Mamadeira</span>
+                            <span>Kit de Mamadeira</span>
+                            <span class="item-quantity" data-item="Kit de Mamadeira">1</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="1x Kit Plástico s/Banheira">
+                            <input type="checkbox" name="mimos" value="Kit Plástico s/Banheira">
                             <span class="checkbox-custom"></span>
-                            <span>1x Kit Plástico s/Banheira</span>
+                            <span>Kit Plástico s/Banheira</span>
+                            <span class="item-quantity" data-item="Kit Plástico s/Banheira">1</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="1x Kit Manicure p/Bebê">
+                            <input type="checkbox" name="mimos" value="Kit Manicure p/Bebê">
                             <span class="checkbox-custom"></span>
-                            <span>1x Kit Manicure p/Bebê</span>
+                            <span>Kit Manicure p/Bebê</span>
+                            <span class="item-quantity" data-item="Kit Manicure p/Bebê">1</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="1x Kit Escova e Pente">
+                            <input type="checkbox" name="mimos" value="Kit Escova e Pente">
                             <span class="checkbox-custom"></span>
-                            <span>1x Kit Escova e Pente</span>
+                            <span>Kit Escova e Pente</span>
+                            <span class="item-quantity" data-item="Kit Escova e Pente">1</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="3x Lenço Umedecido">
+                            <input type="checkbox" name="mimos" value="Lenço Umedecido">
                             <span class="checkbox-custom"></span>
-                            <span>3x Lenço Umedecido</span>
+                            <span>Lenço Umedecido</span>
+                            <span class="item-quantity" data-item="Lenço Umedecido">3</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="5x Sabonete Líquido">
+                            <input type="checkbox" name="mimos" value="Sabonete Líquido">
                             <span class="checkbox-custom"></span>
-                            <span>5x Sabonete Líquido</span>
+                            <span>Sabonete Líquido</span>
+                            <span class="item-quantity" data-item="Sabonete Líquido">5</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="5x Pomada Bepantol Baby">
+                            <input type="checkbox" name="mimos" value="Pomada Bepantol Baby">
                             <span class="checkbox-custom"></span>
-                            <span>5x Pomada Bepantol Baby</span>
+                            <span>Pomada Bepantol Baby</span>
+                            <span class="item-quantity" data-item="Pomada Bepantol Baby">5</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="items" value="2x Talco">
+                            <input type="checkbox" name="mimos" value="Talco">
                             <span class="checkbox-custom"></span>
-                            <span>2x Talco</span>
+                            <span>Talco</span>
+                            <span class="item-quantity" data-item="Talco">2</span>
                         </label>
                     </div>
                 </div>
@@ -324,7 +366,7 @@
         <a href="admin.html" class="admin-link">🔐 Área do Administrador</a>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script-api.js"></script>
 </body>
 
 </html>
