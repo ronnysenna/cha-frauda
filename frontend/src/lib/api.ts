@@ -9,7 +9,8 @@ export const api = {
   async getRecords(): Promise<AttendanceRecord[]> {
     const response = await fetch(`${API_BASE}/records`);
     if (!response.ok) throw new Error("Erro ao buscar registros");
-    return response.json();
+    const json = await response.json();
+    return json.data;
   },
 
   async createRecord(data: FormData): Promise<AttendanceRecord> {
@@ -19,7 +20,8 @@ export const api = {
       body: JSON.stringify(data),
     });
     if (!response.ok) throw new Error("Erro ao criar registro");
-    return response.json();
+    const json = await response.json();
+    return json.data;
   },
 
   async deleteRecord(id: number): Promise<void> {
@@ -33,7 +35,8 @@ export const api = {
   async getStock(): Promise<StockItem[]> {
     const response = await fetch(`${API_BASE}/stock`);
     if (!response.ok) throw new Error("Erro ao buscar estoque");
-    return response.json();
+    const json = await response.json();
+    return json.data;
   },
 
   async initializeStock(): Promise<void> {
@@ -65,6 +68,7 @@ export const api = {
   async getStats(): Promise<StatsResponse> {
     const response = await fetch(`${API_BASE}/stats`);
     if (!response.ok) throw new Error("Erro ao buscar estatísticas");
-    return response.json();
+    const json = await response.json();
+    return json.data;
   },
 };

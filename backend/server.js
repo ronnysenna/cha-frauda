@@ -60,7 +60,20 @@ app.get("/api/records", async (req, res) => {
     const result = await pool.query(
       "SELECT * FROM attendance_records ORDER BY data_registro DESC"
     );
-    res.json({ success: true, data: result.rows });
+
+    // Garantir que `itens` seja um array ao enviar ao cliente
+    const rows = result.rows.map((r) => {
+      try {
+        if (typeof r.itens === "string") {
+          return { ...r, itens: JSON.parse(r.itens) };
+        }
+      } catch (e) {
+        // não conseguiu parsear, mantém como string
+      }
+      return r;
+    });
+
+    res.json({ success: true, data: rows });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, error: err.message });
@@ -72,11 +85,21 @@ app.post("/api/records", async (req, res) => {
   const { nome, presenca, itens, observacoes } = req.body;
 
   try {
+    // armazenar itens como JSON string para compatibilidade
+    const itensToStore = JSON.stringify(itens || []);
+
     const result = await pool.query(
       "INSERT INTO attendance_records (nome, presenca, itens, observacoes) VALUES ($1, $2, $3, $4) RETURNING *",
-      [nome, presenca, itens, observacoes]
+      [nome, presenca, itensToStore, observacoes]
     );
-    res.json({ success: true, data: result.rows[0] });
+
+    const inserted = result.rows[0];
+    try {
+      if (typeof inserted.itens === "string")
+        inserted.itens = JSON.parse(inserted.itens);
+    } catch (e) {}
+
+    res.json({ success: true, data: inserted });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, error: err.message });
@@ -216,10 +239,10 @@ app.get("/api/stats", async (req, res) => {
       "SELECT COUNT(*) FROM attendance_records"
     );
     const presentes = await pool.query(
-      "SELECT COUNT(*) FROM attendance_records WHERE presenca = 'Sim'"
+      "SELECT COUNT(*) FROM attendance_records WHERE LOWER(presenca) = 'sim'"
     );
     const ausentes = await pool.query(
-      "SELECT COUNT(*) FROM attendance_records WHERE presenca = 'Não'"
+      "SELECT COUNT(*) FROM attendance_records WHERE LOWER(presenca) = 'nao'"
     );
 
     res.json({
