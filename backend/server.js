@@ -151,7 +151,6 @@ app.post("/api/stock/initialize", async (req, res) => {
     { name: "Fraldas M", category: "fraldas", qty: 13 },
     { name: "Fraldas G", category: "fraldas", qty: 17 },
     { name: "Fraldas GG", category: "fraldas", qty: 25 },
-    { name: "Pacote Fralda de Pano", category: "fraldas", qty: 3 },
     // Berço
     { name: "Cobertor de Berço", category: "berco", qty: 2 },
     { name: "Manta Micro Fibra", category: "berco", qty: 2 },
@@ -162,6 +161,7 @@ app.post("/api/stock/initialize", async (req, res) => {
     { name: "Kit Abajur", category: "berco", qty: 1 },
     { name: "Manta de Passeio", category: "berco", qty: 2 },
     // Roupas
+    { name: "Pacote Fralda de Pano", category: "roupas", qty: 3 },
     { name: "Babador", category: "roupas", qty: 3 },
     { name: "Bodies Manga Curta P", category: "roupas", qty: 4 },
     { name: "Bodies Manga Longa P", category: "roupas", qty: 4 },
