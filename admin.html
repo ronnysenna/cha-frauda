@@ -657,7 +657,7 @@
                     </div>
                     ${record.presenca === 'Sim' ? `
                         <div class="record-detail" style="margin-top: 10px;">
-                            <strong>Fraldas:</strong> ${record.fraldas}
+                            <strong>Itens:</strong> ${record.itens}
                         </div>
                     ` : ''}
                     ${record.observacoes !== 'Nenhuma' ? `
@@ -673,7 +673,7 @@
                 row.innerHTML = `
                     <td><strong>${record.nome}</strong></td>
                     <td><span class="badge badge-${record.presenca === 'Sim' ? 'sim' : 'nao'}">${record.presenca}</span></td>
-                    <td>${record.presenca === 'Sim' ? record.fraldas : '-'}</td>
+                    <td>${record.presenca === 'Sim' ? record.itens : '-'}</td>
                     <td>${record.observacoes !== 'Nenhuma' ? record.observacoes : '-'}</td>
                     <td>${record.data_registro}</td>
                 `;
@@ -686,17 +686,17 @@
             const presentes = records.filter(r => r.presenca === 'Sim').length;
             const ausentes = records.filter(r => r.presenca === 'Não').length;
 
-            let totalFraldas = 0;
+            let totalItens = 0;
             records.forEach(record => {
                 if (record.presenca === 'Sim') {
-                    totalFraldas += record.fraldas.split(', ').length;
+                    totalItens += record.itens.split(', ').length;
                 }
             });
 
             document.getElementById('totalRegistros').textContent = total;
             document.getElementById('totalPresentes').textContent = presentes;
             document.getElementById('totalAusentes').textContent = ausentes;
-            document.getElementById('totalFraldas').textContent = totalFraldas;
+            document.getElementById('totalFraldas').textContent = totalItens;
         }
 
         function toggleView(view) {
@@ -723,9 +723,9 @@
                 return;
             }
 
-            let csv = 'Nome,Presença,Fraldas,Observações,Data do Registro\n';
+            let csv = 'Nome,Presença,Itens,Observações,Data do Registro\n';
             records.forEach(record => {
-                csv += `"${record.nome}","${record.presenca}","${record.fraldas}","${record.observacoes}","${record.data_registro}"\n`;
+                csv += `"${record.nome}","${record.presenca}","${record.itens}","${record.observacoes}","${record.data_registro}"\n`;
             });
 
             downloadFile(csv, `presencas_cha_fraldas_${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
