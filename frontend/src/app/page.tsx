@@ -139,21 +139,31 @@ export default function Home() {
     return 'bg-red-100 text-red-700';
   };
 
-  const ItemCheckbox = ({ item }: { item: StockItem }) => (
-    <label className="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-pink-400 transition">
-      <Checkbox
-        checked={formData.itens.includes(item.item_name)}
-        onCheckedChange={(checked) =>
-          handleItemChange(item.item_name, checked as boolean)
-        }
-        disabled={stockLoading}
-      />
-      <span className="ml-3 flex-1 font-medium">{item.item_name}</span>
-      <Badge variant="outline" className={getStockColor(item)}>
-        {item.quantity}
-      </Badge>
-    </label>
-  );
+  const ItemCheckbox = ({ item }: { item: StockItem }) => {
+    const isOutOfStock = item.quantity === 0;
+
+    return (
+      <label className={`flex items-center p-3 border-2 rounded-lg transition ${isOutOfStock
+          ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+          : 'border-gray-200 cursor-pointer hover:border-pink-400'
+        }`}>
+        <Checkbox
+          checked={formData.itens.includes(item.item_name)}
+          onCheckedChange={(checked) =>
+            handleItemChange(item.item_name, checked as boolean)
+          }
+          disabled={stockLoading || isOutOfStock}
+        />
+        <span className={`ml-3 flex-1 font-medium ${isOutOfStock ? 'text-gray-400 line-through' : ''}`}>
+          {item.item_name}
+          {isOutOfStock && <span className="ml-2 text-xs text-red-500">(Esgotado)</span>}
+        </span>
+        <Badge variant="outline" className={getStockColor(item)}>
+          {item.quantity}
+        </Badge>
+      </label>
+    );
+  };
 
   if (!mounted) {
     return (
